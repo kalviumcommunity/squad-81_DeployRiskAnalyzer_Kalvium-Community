@@ -106,7 +106,21 @@ python scripts/consistency_validation.py
 3. Failing records are isolated to `output/validation_failures.csv` and rule-by-rule metrics to `output/validation_rule_summary.csv`.
 4. Clean records passing all checks are saved to `data/processed/validated_customer_data.csv`.
 
+### Multi-Source Merging & Join Validation Pipeline
+To run explicit multi-source join validation, key matching, cardinality checks, and decision reporting:
+```bash
+python scripts/join_validation.py
+```
+
+**Expected Behavior:**
+1. The script loads/generates customer (1000 rows) and orders (5000 rows) datasets from `data/raw/join_customers.csv` and `data/raw/join_orders.csv`.
+2. It executes an explicit left join on `customer_id` and calculates row count delta.
+3. Unmatched keys are isolated to `output/unmatched_customers.csv` and `output/unmatched_orders.csv`.
+4. Compares Inner, Left, Right, and Outer joins and verifies no suffix collision or unexpected key duplication.
+5. Exports join decision audit report to `output/join_decision_report.json` and merged data to `data/processed/merged_customer_orders.csv`.
+
 ---
+
 
 
 
