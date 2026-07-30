@@ -1,0 +1,3 @@
+customer_id,age,birth_date,price,email,phone,start_date,end_date,valid_age,valid_price,valid_date,valid_customer_id,valid_email,valid_email_format,valid_phone,valid_date_order,passes_all_checks
+101.0,32,1992-04-15,150.0,john.doe@example.com,9876543210,2024-01-01,2024-06-30,True,True,True,True,True,True,True,True,True
+110.0,50,1974-06-25,500.0,david@example.com,9876543219,2024-02-01,2024-08-01,True,True,True,True,True,True,True,True,True

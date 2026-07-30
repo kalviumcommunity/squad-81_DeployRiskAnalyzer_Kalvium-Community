@@ -1,0 +1,9 @@
+customer_id,age,birth_date,price,email,phone,start_date,end_date,valid_age,valid_price,valid_date,valid_customer_id,valid_email,valid_email_format,valid_phone,valid_date_order,passes_all_checks
+102.0,180,1985-02-10,200.0,jane.smith@example.com,9876543211,2024-01-01,2024-06-30,False,True,True,True,True,True,True,True,False
+103.0,25,2050-08-20,99.99,alex@example.com,9876543212,2024-01-01,2024-06-30,True,True,False,True,True,True,True,True,False
+104.0,40,1984-11-05,-50.0,sarah@example.com,9876543213,2024-01-01,2024-06-30,True,False,True,True,True,True,True,True,False
+,29,1995-03-12,120.0,mark@example.com,9876543214,2024-01-01,2024-06-30,True,True,True,False,True,True,True,True,False
+106.0,35,1989-07-22,80.0,,9876543215,2024-01-01,2024-06-30,True,True,True,True,False,False,True,True,False
+107.0,31,1993-09-30,300.0,invalidemaildomain.com,9876543216,2024-01-01,2024-06-30,True,True,True,True,True,False,True,True,False
+108.0,45,1979-01-18,450.0,mike@example.com,12345,2024-01-01,2024-06-30,True,True,True,True,True,True,False,True,False
+109.0,27,1997-12-04,175.0,lisa@example.com,9876543218,2024-06-01,2024-01-01,True,True,True,True,True,True,True,False,False
