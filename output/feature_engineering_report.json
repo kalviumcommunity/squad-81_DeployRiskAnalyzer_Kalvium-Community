@@ -1,0 +1,14 @@
+{
+  "total_records": 500,
+  "engineered_features": [
+    "transactions_per_month",
+    "avg_spend_per_transaction",
+    "lifetime_value_per_month",
+    "engagement_tier",
+    "spend_quartile",
+    "rfm_score"
+  ],
+  "rfm_min": 3,
+  "rfm_max": 15,
+  "missing_values_total": 0
+}

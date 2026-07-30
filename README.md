@@ -119,7 +119,21 @@ python scripts/join_validation.py
 4. Compares Inner, Left, Right, and Outer joins and verifies no suffix collision or unexpected key duplication.
 5. Exports join decision audit report to `output/join_decision_report.json` and merged data to `data/processed/merged_customer_orders.csv`.
 
+### Feature Engineering & Derived Business Columns Pipeline
+To run ratio feature computation, equal-width and quantile binning, RFM composite scoring, and feature validation:
+```bash
+python scripts/feature_engineering.py
+```
+
+**Expected Behavior:**
+1. The script loads raw customer activity data from `data/raw/feature_engineering_data.csv`.
+2. Calculates ratio features (`transactions_per_month`, `avg_spend_per_transaction`, `lifetime_value_per_month`).
+3. Performs equal-width binning (`pd.cut`) for engagement tiers (`low`, `medium`, `high`) and quantile binning (`pd.qcut`) for monetary spend (`Q1`, `Q2`, `Q3`, `Q4`).
+4. Constructs composite RFM score combining Recency, Frequency, and Monetary scores (range 3-15).
+5. Validates zero missing values and saves dataset to `data/processed/engineered_customer_features.csv` and report to `output/feature_engineering_report.json`.
+
 ---
+
 
 
 
