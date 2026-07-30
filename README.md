@@ -82,7 +82,20 @@ python scripts/sales_pipeline.py
 3. The cleaned results are written to `output/processed_sales.csv`.
 4. Execution details and any errors are logged to `logs/workflow.log`.
 
+### Statistical Outlier Detection Pipeline
+To run Z-score and IQR statistical outlier detection, capping, binary flagging, and cleaning log generation:
+```bash
+python scripts/outlier_detection.py
+```
+
+**Expected Behavior:**
+1. The script reads raw customer data containing extreme values from `data/raw/customer_revenue.csv`.
+2. It detects Z-score ($Z > 3$) and IQR ($1.5 \times IQR$) anomalies.
+3. Outliers are capped at boundaries and flagged with a binary indicator column `is_outlier`.
+4. Detailed audit trail records are saved to `output/cleaning_log.csv` and processed data to `data/processed/cleaned_revenue_data.csv`.
+
 ---
+
 
 
 # Agent Instructions
