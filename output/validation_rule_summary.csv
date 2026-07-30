@@ -1,0 +1,9 @@
+rule_name,passed,failed,pass_rate_pct
+valid_age,9,1,90.0
+valid_price,9,1,90.0
+valid_date,9,1,90.0
+valid_customer_id,9,1,90.0
+valid_email,9,1,90.0
+valid_email_format,8,2,80.0
+valid_phone,9,1,90.0
+valid_date_order,9,1,90.0

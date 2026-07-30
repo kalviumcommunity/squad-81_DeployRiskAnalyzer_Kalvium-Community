@@ -94,7 +94,20 @@ python scripts/outlier_detection.py
 3. Outliers are capped at boundaries and flagged with a binary indicator column `is_outlier`.
 4. Detailed audit trail records are saved to `output/cleaning_log.csv` and processed data to `data/processed/cleaned_revenue_data.csv`.
 
+### Data Consistency & Validation Rules Pipeline
+To run 5-category systematic validation checks (Range, Null, Format Pattern, Business Rules, Isolation & Reporting):
+```bash
+python scripts/consistency_validation.py
+```
+
+**Expected Behavior:**
+1. The script loads customer raw dataset from `data/raw/customer_validation_data.csv`.
+2. It applies Range Checks ($0 \le \text{age} \le 150$, $\text{price} \ge 0$, birth date bounds), Null Constraints (`customer_id`, `email`), Format Regex Validation (`email` `@` pattern, `phone` 10-digits), and Business Rules (`end_date` $\ge$ `start_date`).
+3. Failing records are isolated to `output/validation_failures.csv` and rule-by-rule metrics to `output/validation_rule_summary.csv`.
+4. Clean records passing all checks are saved to `data/processed/validated_customer_data.csv`.
+
 ---
+
 
 
 
