@@ -195,6 +195,20 @@ python scripts/correlation_analysis.py
 5. Outputs a causal analysis report mapping direction hypotheses and business actions to `output/correlation_causality_report.json`.
 6. Performs collinearity feature selection by dropping redundant variables (e.g. dropping `engagement_score` in favor of `total_transactions`), showing comparative correlation matrices, and saving the selected features dataset to `data/processed/selected_correlation_features.csv`.
 
+### GroupBy Aggregation & Segment Insights Pipeline
+To aggregate data across single-level and multi-level dimensions, plot pivot summaries, rank performers, and output targeted business recommendations:
+```bash
+python scripts/groupby_insights.py
+```
+
+**Expected Behavior:**
+1. The script loads dataset from `data/raw/customer_revenue.csv` and injects product and support tickets metrics.
+2. Performs a single-level groupby on `customer_segment` to compute aggregate counts, sum revenue, average support tickets, and churn rates.
+3. Performs a multi-level groupby on `customer_segment` and `product` to reveal multi-dimensional volume and value trends.
+4. Generates a pivot table aggregating total revenue by segment (rows) and product (columns).
+5. Ranks segments by churn rate to identify worst-performing customer cohorts and computes revenue contribution shares.
+6. Assesses segment metrics against threshold bounds (e.g. >10% churn rate) to generate custom actions, and exports findings to `output/segment_insights.csv`, `data/processed/segment_insights.csv`, and `output/segment_insights_report.json`.
+
 ---
 
 
