@@ -1,0 +1,26 @@
+{
+  "dataset_rows": 5000,
+  "dataset_cols": 11,
+  "added_vectorized_columns": [
+    "revenue_normalized",
+    "revenue_zscore",
+    "revenue_rank"
+  ],
+  "summary_statistics": {
+    "revenue_normalized_min": 0.0,
+    "revenue_normalized_max": 1.0,
+    "revenue_zscore_mean": 2.842170943040401e-18,
+    "revenue_zscore_std": 1.0001000150025003,
+    "min_rank": 1,
+    "max_rank": 5000
+  },
+  "performance_comparison": {
+    "row_count": 5000,
+    "multiplier_loop_time_sec": 0.000585,
+    "multiplier_numpy_time_sec": 3.8e-05,
+    "multiplier_speedup": 15.47,
+    "normalization_loop_time_sec": 0.001092,
+    "normalization_numpy_time_sec": 4.1e-05,
+    "normalization_speedup": 26.69
+  }
+}
