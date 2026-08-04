@@ -167,6 +167,20 @@ python scripts/vectorized_computation.py
 5. Measures execution time and speedup ratios using `time.perf_counter`.
 6. Integrates new feature columns (`revenue_normalized`, `revenue_zscore`, `revenue_rank`) back into DataFrame, verifies zero missing values, and saves outputs to `data/processed/vectorized_customer_revenue.csv` and `output/vectorized_computation_report.json`.
 
+### Distribution Analysis for Business Trends Pipeline
+To analyze dataset distributions, plot histograms/KDEs, compute skewness/kurtosis, detect abnormal patterns, compare segments, and output business findings:
+```bash
+python scripts/distribution_analysis.py
+```
+
+**Expected Behavior:**
+1. The script loads dataset from `data/raw/customer_revenue.csv`.
+2. Plots and saves a dual-subplot Histogram and KDE chart to `output/revenue_distribution.png`.
+3. Computes skewness and kurtosis metrics to check for shape asymmetry and tail weight.
+4. Analyzes percentiles and identifies gap anomalies to flag abnormal bimodal patterns.
+5. Splits records into High-Value (top 25%) and Low-Value (bottom 25%) segments, plots comparison histograms to `output/revenue_segment_comparison.png`, and computes segment-specific metrics.
+6. Writes a formatted business interpretation analysis report to `output/revenue_distribution_interpretation.txt` and metrics to `output/revenue_distribution_metrics.json`.
+
 ---
 
 

@@ -1,0 +1,9 @@
+{
+  "skewness": 18.409173294113977,
+  "kurtosis": 345.2682200281296,
+  "mean": 3993.24333,
+  "median": 668.315,
+  "max": 1000000.0,
+  "p99": 7899.5854000000045,
+  "recommendation": "Segment into small/enterprise"
+}

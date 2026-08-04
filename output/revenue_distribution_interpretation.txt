@@ -1,0 +1,13 @@
+
+Revenue Distribution Analysis Report:
+
+Skewness: 18.41 → Highly right-skewed
+Mean: $3993.24
+Median: $668.32
+Interpretation: Most customers are small; few are huge enterprise accounts.
+
+Kurtosis: 345.27 → Fat tails (extreme outliers present)
+Max: $1000000.00
+Top 1% Threshold: $7899.59
+
+Business Action: Segment into distinct small business and enterprise tiers to target marketing, product, and sales strategies differently.
