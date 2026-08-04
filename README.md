@@ -181,6 +181,20 @@ python scripts/distribution_analysis.py
 5. Splits records into High-Value (top 25%) and Low-Value (bottom 25%) segments, plots comparison histograms to `output/revenue_segment_comparison.png`, and computes segment-specific metrics.
 6. Writes a formatted business interpretation analysis report to `output/revenue_distribution_interpretation.txt` and metrics to `output/revenue_distribution_metrics.json`.
 
+### Correlation & Relationship Analysis Pipeline
+To analyze variables relationship, compute Pearson/Spearman matrices, plot correlation heatmap, identify strong feature pairs, output causality interpretations, and do correlation-based feature selection:
+```bash
+python scripts/correlation_analysis.py
+```
+
+**Expected Behavior:**
+1. The script loads dataset from `data/raw/feature_engineering_data.csv` and injects synthetic metrics for relationships.
+2. Computes both Pearson and Spearman correlation matrices across numeric features.
+3. Generates and saves a correlation heatmap to `output/correlation_heatmap.png`.
+4. Flat-filters unique strongly correlated feature pairs where $|r| > 0.7$.
+5. Outputs a causal analysis report mapping direction hypotheses and business actions to `output/correlation_causality_report.json`.
+6. Performs collinearity feature selection by dropping redundant variables (e.g. dropping `engagement_score` in favor of `total_transactions`), showing comparative correlation matrices, and saving the selected features dataset to `data/processed/selected_correlation_features.csv`.
+
 ---
 
 
