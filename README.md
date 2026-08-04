@@ -57,6 +57,27 @@ output/         Generated reports and figures
 
 This project executes modular, production-ready Python scripts rather than relying solely on Jupyter notebooks.
 
+### Generate Large Datasets (Start Here)
+To generate all large, realistic raw datasets required by every pipeline (replaces the small sample files):
+```bash
+python scripts/generate_datasets.py
+```
+
+**Generates the following files in `data/raw/`:**
+
+| File | Rows | Description |
+|---|---|---|
+| `sales.csv` | ~10,200 | Transactions with noise, nulls & duplicates |
+| `customer_revenue.csv` | 5,000 | Revenue data with age/revenue outliers |
+| `customer_validation_data.csv` | 8,000 | Customers with intentional validation failures |
+| `join_customers.csv` | 5,000 | Customer master for join pipeline |
+| `join_orders.csv` | ~25,250 | Orders (80% matched, 20% orphaned) |
+| `feature_engineering_data.csv` | 10,000 | RFM & behavioural feature source data |
+| `customers.csv` | 500 | General utility customer records |
+| `data_with_dupes.csv` | ~2,200 | Records with 10% injected duplicates |
+
+---
+
 ### Multi-Format CSV & JSON Ingestion
 To run explicit multi-format data ingestion (with encoding fallback, semicolon delimiter handling, nested JSON flattening, and audit report logging):
 ```bash
@@ -131,6 +152,20 @@ python scripts/feature_engineering.py
 3. Performs equal-width binning (`pd.cut`) for engagement tiers (`low`, `medium`, `high`) and quantile binning (`pd.qcut`) for monetary spend (`Q1`, `Q2`, `Q3`, `Q4`).
 4. Constructs composite RFM score combining Recency, Frequency, and Monetary scores (range 3-15).
 5. Validates zero missing values and saves dataset to `data/processed/engineered_customer_features.csv` and report to `output/feature_engineering_report.json`.
+
+### NumPy Vectorised Computation Workflow Pipeline
+To run loop vs NumPy performance benchmarks, Min-Max normalization, Z-Score scaling, bulk ranking, and DataFrame integration:
+```bash
+python scripts/vectorized_computation.py
+```
+
+**Expected Behavior:**
+1. The script loads dataset from `data/raw/customer_revenue.csv`.
+2. Replaces loop-based Min-Max normalization with vectorized NumPy array operations `(arr - min) / (max - min)`.
+3. Performs Z-Score normalization `(arr - mean) / std` using NumPy arrays.
+4. Executes bulk customer ranking by revenue descending using `np.argsort(-arr)`.
+5. Measures execution time and speedup ratios using `time.perf_counter`.
+6. Integrates new feature columns (`revenue_normalized`, `revenue_zscore`, `revenue_rank`) back into DataFrame, verifies zero missing values, and saves outputs to `data/processed/vectorized_customer_revenue.csv` and `output/vectorized_computation_report.json`.
 
 ---
 
