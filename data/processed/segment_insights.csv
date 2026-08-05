@@ -1,5 +1,4 @@
 segment,customer_count,churn_rate,total_revenue,revenue_contribution,action
-B2B,1207,17.8%,$2305467,11.5%,HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns.
-B2C,1312,15.2%,$2336823,11.7%,HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns.
-Enterprise,1221,20.1%,$8920880,44.7%,HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns.
-SMB,1260,18.7%,$6403047,32.1%,HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns.
+Enterprise,54,0.0%,$7686295,82.2%,Healthy. Maintain current service level.
+SMB,407,11.5%,$1023111,10.9%,HIGH PRIORITY: Churn above 10%. Investigate pain points.
+Startup,539,7.8%,$644622,6.9%,Monitor. No immediate action needed.
