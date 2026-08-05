@@ -1,0 +1,20 @@
+TREND & ROLLING METRICS BUSINESS ANALYSIS REPORT
+==================================================
+
+Rolling Average Trend: UP
+Change over last 30 days: 0.8%
+Month-over-Month Growth (Latest Month): 3.9%
+Revenue Volatility (Standard Deviation): $2,365.71
+
+Pattern Summary:
+- Daily revenue exhibits high short-term volatility (std dev $2,366), which creates false alarms when inspecting individual day-to-day changes.
+- The 7-day rolling average effectively eliminates day-of-week seasonality (e.g. weekend dips).
+- The 30-day rolling average confirms a sustainable UP trend across the period (+0.8% growth over the last month).
+
+Business Implications:
+- Accelerating growth - maintain current scaling strategy and support capacity.
+- Avoid making aggressive pricing or marketing adjustments based on daily fluctuations.
+
+Recommended Actions:
+- Rely on 7-day MA for operational scheduling and 30-day MA for strategic quarterly forecasting.
+- Establish automated alerts triggered only when the 7-day MA drops below threshold boundaries, filtering out daily noise.
