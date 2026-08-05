@@ -1,34 +1,26 @@
 [
   {
-    "segment": "B2B",
-    "customer_count": 1207,
-    "churn_rate": "17.8%",
-    "total_revenue": "$2305467",
-    "revenue_contribution": "11.5%",
-    "action": "HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns."
-  },
-  {
-    "segment": "B2C",
-    "customer_count": 1312,
-    "churn_rate": "15.2%",
-    "total_revenue": "$2336823",
-    "revenue_contribution": "11.7%",
-    "action": "HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns."
-  },
-  {
     "segment": "Enterprise",
-    "customer_count": 1221,
-    "churn_rate": "20.1%",
-    "total_revenue": "$8920880",
-    "revenue_contribution": "44.7%",
-    "action": "HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns."
+    "customer_count": 54,
+    "churn_rate": "0.0%",
+    "total_revenue": "$7686295",
+    "revenue_contribution": "82.2%",
+    "action": "Healthy. Maintain current service level."
   },
   {
     "segment": "SMB",
-    "customer_count": 1260,
-    "churn_rate": "18.7%",
-    "total_revenue": "$6403047",
-    "revenue_contribution": "32.1%",
-    "action": "HIGH PRIORITY: Churn above 10%. Investigate product pain points and setup retention campaigns."
+    "customer_count": 407,
+    "churn_rate": "11.5%",
+    "total_revenue": "$1023111",
+    "revenue_contribution": "10.9%",
+    "action": "HIGH PRIORITY: Churn above 10%. Investigate pain points."
+  },
+  {
+    "segment": "Startup",
+    "customer_count": 539,
+    "churn_rate": "7.8%",
+    "total_revenue": "$644622",
+    "revenue_contribution": "6.9%",
+    "action": "Monitor. No immediate action needed."
   }
 ]
