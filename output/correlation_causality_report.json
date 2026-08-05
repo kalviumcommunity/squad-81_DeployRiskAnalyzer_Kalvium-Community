@@ -1,21 +1,12 @@
 {
-  "support_tickets_raised <-> churn": {
-    "correlation": 0.7519990193696716,
+  "support_tickets <-> churn": {
+    "correlation": 0.74,
     "possible_directions": [
-      "support_tickets_raised \u2192 churn (customer support contacts frustrate users causing churn)",
-      "churn \u2192 support_tickets_raised (unhappy customers contact support repeatedly before churning)",
-      "underlying_system_instability_or_bugs \u2192 both support_tickets_raised AND churn (confounding pain factor)"
+      "support_tickets \u2192 churn (customer gives up after contacting support)",
+      "churn \u2192 support_tickets (unhappy customers contact support before leaving)",
+      "customer_pain \u2192 both (underlying issue causes both)"
     ],
-    "data_indicates": "Likely customer pain (due to bugs/downtime) is the confounding cause; support tickets are the symptom, not the core cause.",
-    "action": "Invest in resolving root stability issues instead of masking the symptom by restricting support channels."
-  },
-  "total_transactions <-> engagement_score": {
-    "correlation": 0.9989273851145097,
-    "possible_directions": [
-      "total_transactions \u2192 engagement_score (higher transactions inherently sum into the score)",
-      "engagement_score \u2192 total_transactions (highly engaged users make more purchases)"
-    ],
-    "data_indicates": "Direct mathematical collinearity / definition linkage.",
-    "action": "One feature is redundant. Drop engagement_score to maintain simple interpretable transaction records."
+    "data_indicates": "Likely customer_pain is the confounder; tickets are symptom not cause",
+    "action": "Focus on reducing pain, not blocking tickets"
   }
 }
