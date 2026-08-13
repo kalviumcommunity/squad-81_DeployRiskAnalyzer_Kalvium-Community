@@ -32,3 +32,6 @@ Agents.md
 # Log files
 logs/
 *.log
+
+# Databases
+*.db
