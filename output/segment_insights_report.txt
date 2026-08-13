@@ -1,0 +1,14 @@
+
+SEGMENT STRATEGY SUMMARY:
+
+Enterprise (5% of base, $151,189 LTV, 0.0% churn):
+- Highest value, lowest churn. Excellent health with very long retention times.
+- Action: Maintain premium high-touch support and expand account penetration through upsells.
+
+SMB (41% of base, $8,014 LTV, 11.8% churn):
+- Middle value, high churn risk. Requires immediate retention focus.
+- Action: Improve onboarding experience, streamline support tickets handling, and offer flexible billing tiers.
+
+Startup (54% of base, $2,000 LTV, 8.7% churn):
+- Lowest value, moderate churn. High volume customer segment.
+- Action: Provide self-service onboarding, tutorials, and automated educational emails.
