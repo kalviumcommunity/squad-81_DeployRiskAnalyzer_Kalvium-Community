@@ -1,7 +1,7 @@
 """
-Streamlit Analytics App Shell with File Upload & Dynamic Preview Engine
-Supports CSV and JSON file uploads, automated data profiling, column summary tables,
-descriptive statistics, error handling, and downstream charting.
+Streamlit Interactive Widgets & Reactive Filter Chain System
+Implements Date Picker, Multi-Select, Range Slider, and Radio Button widgets,
+chained DataFrame filtering, default value management, empty state handling, and filter reset.
 """
 
 import os
@@ -15,208 +15,239 @@ import streamlit as st
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
-# Configure Page Layout - Wide mode
+# Configure Page Layout
 st.set_page_config(
-    page_title="Analytics Dashboard & Dataset Upload System",
-    page_icon="🚀",
+    page_title="Interactive Filters & Analytics Dashboard",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Helper function to generate default benchmark dataset
+# Shared Data Caching for Baseline Dataset
 @st.cache_data
-def load_default_benchmark_data():
+def load_base_dataset():
     np.random.seed(42)
     dates = pd.date_range('2024-01-01', periods=180, freq='D')
     products = ['SaaS Platform', 'Enterprise Support', 'Consulting Service', 'API Access', 'Analytics Add-on']
-    n = 500
+    regions = ['North America', 'EMEA', 'APAC', 'LATAM']
+    n = 1200
+    
     df = pd.DataFrame({
-        'order_id': [f"ORD-{1000+i}" for i in range(n)],
+        'order_id': [f"ORD-{10000+i}" for i in range(n)],
         'order_date': np.random.choice(dates, size=n),
         'product_line': np.random.choice(products, size=n, p=[0.35, 0.25, 0.15, 0.15, 0.10]),
-        'amount': np.round(np.random.normal(4500, 1200, size=n), 2),
+        'region': np.random.choice(regions, size=n),
+        'amount': np.round(np.random.normal(5200, 1500, size=n), 2),
         'churn_risk_score': np.round(np.random.uniform(0.01, 0.99, size=n), 3)
     }).sort_values('order_date').reset_index(drop=True)
     return df
 
-# Task 1 & Task 4: File Upload & Robust Error Handling
-st.sidebar.title("🧭 Navigation & Data Source")
+base_df = load_base_dataset()
+
+# Handle custom file upload or use base dataset
+st.sidebar.title("🧭 Navigation & Filters")
+
 page = st.sidebar.radio(
     "Go to Section",
-    ["Overview", "Dataset Upload & Preview", "Trends", "Segments", "Data Explorer"],
+    ["Overview", "Interactive Filter Explorer", "Trends", "Segments"],
     index=1
 )
 
 st.sidebar.markdown("---")
-st.sidebar.header("📤 Bring Your Own Data")
+st.sidebar.header("🎯 Filter Controls")
 
-uploaded_file = st.sidebar.file_uploader(
-    "Upload Dataset (CSV or JSON)",
-    type=["csv", "json"],
-    help="Upload a CSV or JSON file to analyze custom dataset dynamically."
-)
-
-df = None
-is_custom_upload = False
-
+# Allow file upload
+uploaded_file = st.sidebar.file_uploader("Upload CSV/JSON (Optional)", type=["csv", "json"])
 if uploaded_file is not None:
     try:
         if uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
         elif uploaded_file.name.endswith(".json"):
             df = pd.read_json(uploaded_file)
-        else:
-            st.sidebar.error("Unsupported file type. Please upload a .csv or .json file.")
-            st.stop()
-            
-        if len(df) == 0:
-            st.sidebar.warning("The uploaded file is empty. Please check your data.")
-            st.stop()
-            
-        is_custom_upload = True
-        st.sidebar.success(f"✓ Loaded: `{uploaded_file.name}` ({len(df):,} rows, {len(df.columns)} cols)")
+        if 'order_date' in df.columns:
+            df['order_date'] = pd.to_datetime(df['order_date'])
     except Exception as e:
-        st.sidebar.error(f"Could not read this file. Check the format and try again. ({str(e)})")
-        st.stop()
+        st.sidebar.error(f"Error loading file: {e}")
+        df = base_df
 else:
-    st.sidebar.info("No file uploaded. Using default benchmark sales dataset.")
-    df = load_default_benchmark_data()
+    df = base_df.copy()
 
-# Store active DataFrame in session state for downstream persistence
-st.session_state['active_df'] = df
+# Ensure order_date is datetime
+if 'order_date' in df.columns:
+    df['order_date'] = pd.to_datetime(df['order_date'])
 
-# Page 1: Overview
+# Task 1 & Task 3: Interactive Widgets with Meaningful Defaults
+
+# Task 5: Reset Filters Mechanism Button
+if st.sidebar.button("🔄 Reset All Filters"):
+    st.rerun()
+
+st.sidebar.markdown("---")
+
+# Widget 1: Date Range Picker (Defaults to full dataset range)
+if 'order_date' in df.columns:
+    min_date_val = df['order_date'].min().date()
+    max_date_val = df['order_date'].max().date()
+    
+    date_range = st.sidebar.date_input(
+        "1. Date Range Picker",
+        value=(min_date_val, max_date_val),
+        min_value=min_date_val,
+        max_value=max_date_val
+    )
+else:
+    date_range = None
+
+# Widget 2: Multi-Select for Categories (Defaults to ALL items selected)
+if 'product_line' in df.columns:
+    all_products = sorted(df['product_line'].dropna().unique().tolist())
+    selected_products = st.sidebar.multiselect(
+        "2. Product Line Multi-Select",
+        options=all_products,
+        default=all_products
+    )
+else:
+    selected_products = []
+
+# Widget 3: Range Slider for Numeric Values (Defaults to full min/max range)
+if 'amount' in df.columns:
+    min_amt = float(df['amount'].min())
+    max_amt = float(df['amount'].max())
+    
+    amount_range = st.sidebar.slider(
+        "3. Revenue Amount Range ($)",
+        min_value=min_amt,
+        max_value=max_amt,
+        value=(min_amt, max_amt),
+        step=100.0
+    )
+else:
+    amount_range = (0.0, 100000.0)
+
+# Widget 4: Radio Button for View Granularity / Aggregation
+view_granularity = st.sidebar.radio(
+    "4. Chart Granularity",
+    ["Daily", "Weekly", "Monthly"],
+    index=0
+)
+
+# Task 2: Chained DataFrame Filtering Logic
+filtered_df = df.copy()
+
+if date_range and isinstance(date_range, (list, tuple)) and len(date_range) == 2:
+    start_d, end_d = date_range
+    filtered_df = filtered_df[
+        (filtered_df['order_date'].dt.date >= start_d) &
+        (filtered_df['order_date'].dt.date <= end_d)
+    ]
+
+if selected_products and 'product_line' in filtered_df.columns:
+    filtered_df = filtered_df[filtered_df['product_line'].isin(selected_products)]
+
+if amount_range and 'amount' in filtered_df.columns:
+    filtered_df = filtered_df[
+        (filtered_df['amount'] >= amount_range[0]) &
+        (filtered_df['amount'] <= amount_range[1])
+    ]
+
+# Task 4: Empty Filter Combination Handling
+if len(filtered_df) == 0:
+    st.warning("⚠️ **No data matches the current filter criteria.** Try broadening your selections or clicking 'Reset All Filters' in the sidebar.")
+    st.info("Tip: Check if the date range, product selections, or amount sliders are too restrictive.")
+    st.stop()
+
+# Store active filtered DataFrame in session state
+st.session_state['filtered_df'] = filtered_df
+
+# Page Rendering Logic
 if page == "Overview":
     st.title("📊 Executive Business Overview")
-    st.caption("Key Performance Indicators & Top-Level Dashboard Metrics")
+    st.caption(f"Displaying {len(filtered_df):,} of {len(df):,} total records")
     
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric(label="Total Revenue", value=f"${df['amount'].sum():,.2f}" if 'amount' in df.columns else "$5.24M", delta="+12.5%")
+        st.metric("Total Revenue", f"${filtered_df['amount'].sum():,.2f}" if 'amount' in filtered_df.columns else "$0")
     with col2:
-        st.metric(label="Total Records", value=f"{len(df):,}", delta="+5.2%")
+        st.metric("Filtered Records", f"{len(filtered_df):,}")
     with col3:
-        st.metric(label="Avg Value", value=f"${df['amount'].mean():,.2f}" if 'amount' in df.columns else "$45.00", delta="+2.1%")
+        st.metric("Average Order Value", f"${filtered_df['amount'].mean():,.2f}" if 'amount' in filtered_df.columns else "$0")
     with col4:
-        st.metric(label="Churn Rate", value="5.2%", delta="-2.8%", delta_color="inverse")
-    with col5:
-        st.metric(label="Customer NPS", value="72 / 100", delta="+4 pts")
+        st.metric("Selected Products", f"{filtered_df['product_line'].nunique()}" if 'product_line' in filtered_df.columns else "N/A")
 
     st.divider()
-    st.info("💡 Navigate to **Dataset Upload & Preview** in the sidebar to inspect full dataset profiling.")
+    st.dataframe(filtered_df.head(10), use_container_width=True)
 
-# Page 2: Dataset Upload & Preview (Tasks 2, 3, 4, 5)
-elif page == "Dataset Upload & Preview":
-    st.title("📂 Dataset Upload & Dynamic Preview System")
-    st.caption("Automatic data profiling, schema validation, and summary statistics")
+elif page == "Interactive Filter Explorer":
+    st.title("⚡ Interactive Widgets & Filter Explorer")
+    st.caption("All widgets in the sidebar reactively update downstream metrics, charts, and tables.")
     
-    if is_custom_upload:
-        st.success(f"🎉 Custom Dataset Active: `{uploaded_file.name}`")
+    # Summary Metrics Row
+    col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+    col_m1.metric("Filtered Rows", f"{len(filtered_df):,}")
+    col_m2.metric("Total Filtered Revenue", f"${filtered_df['amount'].sum():,.2f}")
+    col_m3.metric("Min Amount Filtered", f"${filtered_df['amount'].min():,.2f}")
+    col_m4.metric("Max Amount Filtered", f"${filtered_df['amount'].max():,.2f}")
+    
+    st.divider()
+    
+    # Reactive Time-Series Chart
+    st.header("1. Reactive Revenue Trend Chart")
+    
+    if view_granularity == "Daily":
+        time_grp = filtered_df.groupby('order_date')['amount'].sum().reset_index()
+    elif view_granularity == "Weekly":
+        time_grp = filtered_df.groupby(pd.Grouper(key='order_date', freq='W-MON'))['amount'].sum().reset_index()
     else:
-        st.info("ℹ️ Displaying default benchmark dataset. Use the sidebar file uploader to analyze custom CSV/JSON files.")
+        time_grp = filtered_df.groupby(pd.Grouper(key='order_date', freq='ME'))['amount'].sum().reset_index()
         
-    st.header("Dataset Overview & Metrics")
-    
-    # Task 2: Data shape summary metrics
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Rows", f"{len(df):,}")
-    with col2:
-        st.metric("Total Columns", str(len(df.columns)))
-    with col3:
-        total_nulls = int(df.isnull().sum().sum())
-        total_cells = int(df.shape[0] * df.shape[1])
-        null_pct = (total_nulls / total_cells * 100.0) if total_cells > 0 else 0.0
-        st.metric("Overall Null %", f"{null_pct:.1f}%")
-        
-    st.divider()
-    
-    # Task 2: First 10 Rows Preview
-    st.subheader("First 10 Rows Preview")
-    st.dataframe(df.head(10), use_container_width=True)
+    fig_trend = go.Figure(data=go.Scatter(
+        x=time_grp['order_date'],
+        y=time_grp['amount'],
+        mode='lines+markers',
+        line=dict(color='#1f77b4', width=2.5),
+        marker=dict(size=6),
+        hovertemplate='<b>Date: %{x|%b %d, %Y}</b><br>Revenue: $%{y:,.2f}<extra></extra>'
+    ))
+    fig_trend.update_layout(
+        title=f"Filtered Revenue Trend ({view_granularity} Granularity)",
+        xaxis_title="Date",
+        yaxis_title="Revenue ($)",
+        template="plotly_white",
+        height=400
+    )
+    st.plotly_chart(fig_trend, use_container_width=True)
     
     st.divider()
     
-    # Task 2: Column Summary Table
-    st.subheader("Column Summary & Schema Profile")
-    summary = pd.DataFrame({
-        "Column": df.columns,
-        "Data Type": df.dtypes.astype(str).values,
-        "Non-Null Count": df.notnull().sum().values,
-        "Null Count": df.isnull().sum().values,
-        "Null %": (df.isnull().sum() / len(df) * 100).round(1).values
-    })
-    st.dataframe(summary, use_container_width=True)
+    # Reactive Categorical Bar Chart
+    st.header("2. Reactive Product Revenue Share")
+    prod_grp = filtered_df.groupby('product_line')['amount'].sum().reset_index()
+    
+    fig_bar = go.Figure(data=go.Bar(
+        x=prod_grp['product_line'],
+        y=prod_grp['amount'],
+        marker=dict(color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']),
+        hovertemplate='<b>Product: %{x}</b><br>Revenue: $%{y:,.2f}<extra></extra>'
+    ))
+    fig_bar.update_layout(
+        title="Filtered Revenue by Product Line",
+        xaxis_title="Product Line",
+        yaxis_title="Total Revenue ($)",
+        template="plotly_white",
+        height=400
+    )
+    st.plotly_chart(fig_bar, use_container_width=True)
     
     st.divider()
     
-    # Task 3: Basic Descriptive Statistics
-    st.subheader("Descriptive Statistics (Numeric Columns)")
-    numeric_df = df.select_dtypes(include="number")
-    if not numeric_df.empty:
-        st.dataframe(df.describe().T, use_container_width=True)
-    else:
-        st.info("No numeric columns found for descriptive statistics.")
-        
-    st.divider()
-    
-    # Task 5: Downstream Exploration (Charts & Selectbox Filtering)
-    st.subheader("Quick Data Exploration & Visualisation")
-    numeric_cols = numeric_df.columns.tolist()
-    
-    if numeric_cols:
-        col_select, col_chart = st.columns([1, 2])
-        with col_select:
-            selected_col = st.selectbox("Select a numeric column to visualize:", numeric_cols)
-            st.markdown(f"**Column Summary for `{selected_col}`:**")
-            st.write(f"- Mean: {df[selected_col].mean():,.2f}")
-            st.write(f"- Min: {df[selected_col].min():,.2f}")
-            st.write(f"- Max: {df[selected_col].max():,.2f}")
-            
-        with col_chart:
-            fig = go.Figure(data=go.Histogram(
-                x=df[selected_col],
-                nbinsx=20,
-                marker=dict(color='#1f77b4', line=dict(color='white', width=1))
-            ))
-            fig.update_layout(
-                title=f"Distribution of `{selected_col}`",
-                xaxis_title=selected_col,
-                yaxis_title="Frequency",
-                template="plotly_white",
-                height=350
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.info("Upload a dataset containing numeric values to enable interactive distribution charts.")
+    # Filtered Table View
+    st.header("3. Filtered Data Table")
+    st.dataframe(filtered_df, use_container_width=True)
 
 elif page == "Trends":
-    st.title("📈 Time-Series Trends")
-    if 'amount' in df.columns and 'order_date' in df.columns:
-        df['order_date'] = pd.to_datetime(df['order_date'])
-        daily = df.groupby('order_date')['amount'].sum().reset_index()
-        fig = go.Figure(data=go.Scatter(x=daily['order_date'], y=daily['amount'], mode='lines', line=dict(color='#2ca02c')))
-        fig.update_layout(title="Daily Amount Trend", template="plotly_white", height=400)
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.info("Upload dataset with `order_date` and `amount` columns to view trends.")
+    st.title("📈 Trend Analysis")
+    st.dataframe(filtered_df[['order_date', 'product_line', 'amount']].head(20), use_container_width=True)
 
 elif page == "Segments":
     st.title("🧩 Segment Breakdown")
-    if 'product_line' in df.columns and 'amount' in df.columns:
-        seg = df.groupby('product_line')['amount'].sum().reset_index()
-        fig = go.Figure(data=go.Bar(x=seg['product_line'], y=seg['amount'], marker=dict(color='#ff7f0e')))
-        fig.update_layout(title="Amount by Product Line", template="plotly_white", height=400)
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.info("Upload dataset with categorical columns to view segment breakdown.")
-
-elif page == "Data Explorer":
-    st.title("🔍 Data Explorer & Raw View")
-    st.dataframe(df, use_container_width=True)
-    st.download_button(
-        label="📥 Download Current Data CSV",
-        data=df.to_csv(index=False).encode('utf-8'),
-        file_name="active_dataset.csv",
-        mime="text/csv"
-    )
+    st.dataframe(filtered_df.groupby('product_line')['amount'].agg(['count', 'sum', 'mean']), use_container_width=True)
