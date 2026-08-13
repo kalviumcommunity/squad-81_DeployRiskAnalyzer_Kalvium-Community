@@ -137,44 +137,44 @@ def validate_imputation(df_original, df_imputed):
     return missing_after
 
 if __name__ == "__main__":
-    # Path setup
-    input_filepath = 'data/raw/missing_data.csv'
-    output_filepath = 'data/processed/cleaned_data.csv'
-    
-    if os.path.exists(input_filepath):
-        df_original = pd.read_csv(input_filepath)
-        df = df_original.copy()
-        
-        # Analyze missing before treatment
-        print("Step 1: Analyzing missing values...")
-        analyze_missing_values(df)
-        
-        # Apply strategy-specific imputation
-        print("\nStep 2: Applying imputation strategies...")
-        
-        # Drop rows with nulls in critical columns
-        df = drop_rows_with_nulls(df, ['customer_id', 'email'])
-        
-        # Impute numerical columns
-        df = impute_mean_median(df, ['amount', 'quantity'], strategy='median')
-        
-        # Impute categorical columns
-        df = impute_mode(df, ['category', 'region'])
-        
-        # Impute time-series columns
-        df = impute_forward_fill(df, ['last_updated'])
-        
-        # Document decisions
-        print("\nStep 3: Documenting imputation decisions...")
-        document_imputation_decisions(df_original, df)
-        
-        # Validate results
-        print("\nStep 4: Validating imputation...")
-        validate_imputation(df_original, df)
-        
-        # Save cleaned data
-        os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
-        df.to_csv(output_filepath, index=False)
-        print(f"\n[OK] Cleaned data saved to {output_filepath}")
-    else:
-        print(f"Error: {input_filepath} does not exist.")
+    # Use the large sales.csv as the primary input (has injected nulls & negatives)
+    input_filepath  = 'data/raw/sales.csv'
+    output_filepath = 'data/processed/cleaned_sales_missing.csv'
+
+    if not os.path.exists(input_filepath):
+        print(f"Error: {input_filepath} not found. Run generate_datasets.py first.")
+        exit(1)
+
+    print("=" * 70)
+    print("MISSING VALUE HANDLING PIPELINE  —  sales.csv")
+    print("=" * 70)
+
+    df_original = pd.read_csv(input_filepath)
+    df = df_original.copy()
+
+    # Step 1 – Profile missing values
+    print("\nStep 1: Analyzing missing values...")
+    analyze_missing_values(df)
+
+    # Step 2 – Imputation strategies
+    print("\nStep 2: Applying imputation strategies...")
+
+    # Numerical: median impute 'amount'
+    df = impute_mean_median(df, ['amount'], strategy='median')
+
+    # Categorical: mode impute region / payment_method / product_category
+    df = impute_mode(df, ['region', 'payment_method', 'product_category'])
+
+    # Step 3 – Document decisions
+    print("\nStep 3: Documenting imputation decisions...")
+    document_imputation_decisions(df_original, df)
+
+    # Step 4 – Validate
+    print("\nStep 4: Validating imputation...")
+    validate_imputation(df_original, df)
+
+    # Save
+    os.makedirs('data/processed', exist_ok=True)
+    df.to_csv(output_filepath, index=False)
+    print(f"\n[OK] Cleaned data saved to {output_filepath}")
+    print(f"     Rows: {len(df_original):,} -> {len(df):,}")

@@ -224,42 +224,43 @@ if __name__ == "__main__":
     os.makedirs('data/processed', exist_ok=True)
     os.makedirs('output', exist_ok=True)
 
-    # Load data
+    # Load data — data_with_dupes.csv has columns: record_id, value, category, created_at
     df_original = pd.read_csv('data/raw/data_with_dupes.csv')
     df = df_original.copy()
-    
+
     print("\n" + "="*70)
     print("STARTING DEDUPLICATION WORKFLOW")
     print("="*70)
     print(f"Initial record count: {len(df):,}")
-    
+    print(f"Columns: {list(df.columns)}")
+
     # Step 1: Detect exact duplicates
     print("\n[Step 1/4] Detecting exact duplicates...")
     exact_count, exact_rows = detect_exact_duplicates(df)
-    
-    # Step 2: Detect near-duplicates
+
+    # Step 2: Detect near-duplicates by record_id (same id, different data)
     print("\n[Step 2/4] Detecting near-duplicates by key...")
-    near_dups = detect_near_duplicates(df, key_columns=['customer_id', 'transaction_date'])
-    
-    # Step 3: Remove exact duplicates
+    near_dups = detect_near_duplicates(df, key_columns=['record_id'])
+
+    # Step 3: Remove exact duplicates (keep first occurrence)
     print("\n[Step 3/4] Removing exact duplicates (keeping first)...")
     df_dedup = remove_exact_duplicates(df, keep='first')
-    
-    # Step 4: Remove near-duplicates
+
+    # Step 4: Remove near-duplicates by record_id (keep most complete)
     print("\n[Step 4/4] Removing near-duplicates (keeping most complete)...")
     df_final = remove_near_duplicates(
         df_dedup,
-        key_columns=['customer_id', 'transaction_date'],
+        key_columns=['record_id'],
         keep_strategy='most_complete'
     )
-    
+
     # Log removals
     print("\n[Audit] Logging removed records for compliance...")
     log_removed_duplicates(df_original, df_final)
-    
+
     # Compare metrics
     compare_before_after(df_original, df_final)
-    
+
     # Save deduplicated data
     df_final.to_csv('data/processed/deduplicated_data.csv', index=False)
-    print("\n✓ Deduplicated data saved to data/processed/deduplicated_data.csv")
+    print("\n[OK] Deduplicated data saved to data/processed/deduplicated_data.csv")
