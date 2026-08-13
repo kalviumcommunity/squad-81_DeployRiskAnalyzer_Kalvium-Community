@@ -5,3 +5,4 @@ plotly>=5.18.0
 reportlab>=4.0.0
 fpdf2>=2.7.0
 schedule>=1.2.0
+sqlalchemy>=2.0.0
