@@ -1,0 +1,25 @@
+JOIN STRATEGY DOCUMENTATION
+
+Table Structure and Primary Keys:
+* Table: customers (1000 rows, PK: customer_id)
+* Table: orders (5000 rows, FK: customer_id)
+* Table: order_items (8000 rows, FK: order_id)
+* Table: products (500 rows, PK: product_id)
+
+Decision 1: customers LEFT JOIN orders
+- Purpose: Retrieve comprehensive customer history, ensuring inactive customers are kept.
+- Row count change: 1000 -> 5050 (all 1000 customers retained, active customers multiplied by their order count, 100 unmatched customers included).
+- Unmatched keys: 100 customers had 0 orders, 50 orphaned orders detected.
+- Business use: Customer lifetime value (LTV), segment active/inactive rates.
+
+Decision 2: orders LEFT JOIN order_items  
+- Purpose: View detailed product transaction details per order.
+- Row count change: 5000 -> 8000 (orders multiplied by the number of line items inside them).
+- Unmatched keys: 0 (no orphaned order items without a parent order).
+- Business use: Basket size analysis, SKU popularity.
+
+Decision 3: Full 4-table join
+- Purpose: Map customer profile to order items and product descriptions.
+- Row count: Base orders count multiplied out to item counts.
+- Risk of Double Counting: Summing order_amount directly on a combined table will yield double-counting due to line-item multipliers.
+- Mitigation: Perform aggregations at the appropriate grouping level.
